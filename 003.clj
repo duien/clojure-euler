@@ -4,19 +4,40 @@
 
 ; Aww, sadface. This explodes with a sufficiently large `number`
 ; I knew it sucked, but I guess it sucks too much to use.
-(defn sieve [maximum]
-  (loop [numbers (range 2 (+ 1 maximum))
-         index   0]
-    (let [current (nth numbers index)]
-      (if (< (* current current) maximum) 
-        (recur
-          (keep (fn [item] (if (and (= 0 (mod item current)) (not (= item current))) nil item)) numbers)
-          (+ 1 index)
-          )
-        numbers
-        )
+; (defn sieve [maximum]
+;   (loop [numbers (range 2 (+ 1 maximum))
+;          index   0]
+;     (let [current (nth numbers index)]
+;       (if (< (* current current) maximum) 
+;         (recur
+;           (keep (fn [item] (if (and (= 0 (mod item current)) (not (= item current))) nil item)) numbers)
+;           (+ 1 index)
+;           )
+;         numbers
+;         )
+;       )
+;     )
+;   )
+
+
+(defn sieve-filter [numbers maximum]
+  (let [current (first numbers)
+        filtered (keep
+                   (fn [item] (if (and (= 0 (mod item current)) (not (= item current)))
+                                nil
+                                item
+                                )
+                     ) numbers)]
+    ; (print current "-" filtered "\n")
+    (if (< (* current current) maximum)
+      (conj (sieve-filter (rest filtered) maximum) current)
+      filtered
       )
     )
+  )
+
+(defn sieve [maximum]
+    (sieve-filter (range 2 (+ 1 maximum)) maximum)
   )
 
 
